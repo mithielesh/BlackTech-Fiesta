@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Level 5 - Adaptive Crisis</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Unified Professional Dark Mode - Level 5 */
+    :root {
+        --bg-main: #0a0a0f;
+        --bg-card: rgba(25, 25, 32, 0.65);
+        --bg-input: rgba(255, 255, 255, 0.05);
+        --bg-hover: rgba(255, 255, 255, 0.06);
+        --border-subtle: rgba(255, 255, 255, 0.08);
+        --text-primary: #e5e7eb;
+        --text-secondary: #9ca3af;
+        --accent-primary: #1e3a8a;
+        --accent-hover: #2563eb;
+        --error-red: #dc2626;
+        --success-green: #10b981;
+        --warning-amber: #f59e0b;
+    }
+
+    body {
+      background:
+          radial-gradient(circle at 15% 30%, rgba(30, 58, 138, 0.35), transparent 40%),
+          radial-gradient(circle at 85% 70%, rgba(37, 99, 235, 0.25), transparent 45%),
+          radial-gradient(circle at 50% 50%, #07070c 0%, #050508 100%);
+      background-color: #050508;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Dense Star Field */
+    body::before {
+      content:'';
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background-image:
+          radial-gradient(1.5px 1.5px at 120px 80px, rgba(255,255,255,0.6), transparent),
+          radial-gradient(1px 1px at 350px 180px, rgba(255,255,255,0.5), transparent),
+          radial-gradient(1.5px 1.5px at 580px 100px, rgba(255,255,255,0.4), transparent),
+          radial-gradient(2px 2px at 820px 280px, rgba(255,255,255,0.7), transparent),
+          radial-gradient(1px 1px at 200px 300px, rgba(255,255,255,0.5), transparent);
+      background-repeat:repeat;
+      background-size:800px 500px;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .exam-shell {
+      min-height: 100vh;
+      padding: 14px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .exam-main {
+      width: 100%;
+      max-width: 1080px;
+      background: var(--bg-card);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    
+    .title-wrap strong { 
+      color: var(--accent-hover); 
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .title-wrap .muted { 
+      display: block; 
+      margin-top: 6px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    
+    .timer-wrap { text-align: right; }
+    
+    .timer-label { 
+      font-size: 11px; 
+      color: var(--text-secondary); 
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    
+    .timer-display { 
+      font-size: 26px; 
+      font-weight: 700; 
+      color: var(--accent-hover); 
+      font-family: 'Consolas', 'Courier New', monospace;
+      background: rgba(20, 20, 28, 0.8);
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+    
+    .muted { 
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    .scenario-title {
+      margin: 0 0 12px;
+      color: var(--accent-hover);
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    
+    .scenario-text {
+      padding: 16px;
+      background: rgba(20, 20, 28, 0.75);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 12px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      backdrop-filter: blur(18px);
+      position: relative;
+    }
+
+    .scenario-text::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    
+    .choices { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+      margin-bottom: 16px;
+    }
+    
+    .choice-btn {
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      background: rgba(20, 20, 28, 0.75);
+      backdrop-filter: blur(18px);
+      color: var(--text-primary);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 15px;
+      font-weight: 500;
+      position: relative;
+    }
+
+    .choice-btn::before {
+      content:'';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    
+    .choice-btn:hover { 
+      background: rgba(37, 99, 235, 0.15);
+      transform: translateY(-2px);
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.1);
+    }
+    
+    .choice-btn:disabled { 
+      opacity: 0.5; 
+      cursor: not-allowed; 
+      transform: none;
+    }
+    
+    .score-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+      gap: 12px; 
+      margin: 16px 0;
+    }
+    
+    .score-box { 
+      background: rgba(20, 20, 28, 0.75);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .score-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    
+    .score-box .k { 
+      color: var(--text-secondary); 
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    
+    .score-box .v { 
+      font-size: 28px; 
+      font-weight: 700; 
+      color: var(--warning-amber);
+    }
+    
+    .trail-wrap {
+      margin-top: 16px;
+      background: rgba(20, 20, 28, 0.75);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .trail-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .trail-wrap h3 {
+      margin: 0 0 12px;
+      color: var(--accent-hover);
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .trail-item { 
+      background: rgba(10, 10, 15, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .trail-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .trail-item strong {
+      color: var(--accent-hover);
+    }
+    
+    .status-line { 
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .status-line.info { 
+      background: rgba(37, 99, 235, 0.1);
+      border-color: rgba(37, 99, 235, 0.3);
+      color: var(--text-primary);
+    }
+    
+    .status-line.success { 
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: var(--success-green);
+    }
+    
+    .status-line.danger { 
+      background: rgba(220, 38, 38, 0.1);
+      border-color: rgba(220, 38, 38, 0.3);
+      color: var(--error-red);
+    }
+    
+    @media (max-width: 900px) {
+      .exam-shell { padding: 8px; }
+      .exam-main { padding: 14px; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .timer-wrap { text-align: left; width: 100%; }
+      .timer-display { font-size: 22px; }
+      .score-grid { grid-template-columns: 1fr; }
+      .scenario-title { font-size: 1.1rem; }
+      .choice-btn { padding: 12px 14px; font-size: 14px; }
+    }
+
+    @media (max-width: 600px) {
+      .exam-shell { padding: 6px; }
+      .exam-main { padding: 12px; }
+      .topbar { padding-bottom: 12px; }
+      .title-wrap strong { font-size: 16px; }
+      .title-wrap .muted { font-size: 12px; }
+      .timer-display { font-size: 20px; padding: 6px 12px; }
+      .scenario-text { padding: 12px; font-size: 14px; }
+      .choice-btn { padding: 10px 12px; font-size: 13px; }
+      .score-box { padding: 12px; }
+      .score-box .v { font-size: 24px; }
+      .trail-wrap { padding: 12px; }
+      .trail-item { padding: 10px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="exam-shell">
+    <main class="exam-main">
+      <div class="topbar">
+        <div class="title-wrap">
+          <strong>Level 5 — Adaptive Crisis (Final Boss)</strong>
+          <span class="muted">Strategic decision simulation • No backtracking</span>
+        </div>
+        <div class="timer-wrap">
+          <div class="timer-label">Time Remaining</div>
+          <div class="timer-display" id="timer-count">10:00</div>
+        </div>
+      </div>
+
+      <h2 id="scenarioTitle" class="scenario-title">Adaptive Crisis Simulation</h2>
+      <p class="muted">Choose one action per stage. Each action changes the next situation and your score impact.</p>
+      <div id="stageText" class="scenario-text"></div>
+      <div id="optionsWrap" class="choices"></div>
+      <div id="statusText" class="status-line info">Initializing simulation...</div>
+
+      <div class="score-grid">
+        <div class="score-box">
+          <div class="k">Decision Score</div>
+          <div class="v" id="decisionScore">0</div>
+        </div>
+        <div class="score-box">
+          <div class="k">Time Bonus</div>
+          <div class="v" id="timeBonus">0</div>
+        </div>
+        <div class="score-box">
+          <div class="k">Total Score</div>
+          <div class="v" id="totalScore">0</div>
+        </div>
+      </div>
+
+      <div class="trail-wrap">
+        <h3>Decision Trail</h3>
+        <div id="trailList"><p class="muted">No decisions made yet.</p></div>
+        <p class="muted" style="margin-top:14px; font-size:12px;">Rule: If cumulative decision score drops below 0, team is eliminated.</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="../assets/js/common.js?v=20260217debug"></script>
+  <script src="../assets/js/api.js?v=20260217c"></script>
+  <script src="../assets/js/level5.js?v=20260217fixed"></script>
+</body>
+</html>

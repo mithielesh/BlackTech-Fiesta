@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Round 1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../css/global.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* Unified Professional Dark Mode - Round 1 */
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-main: #0a0a0f;
+    --bg-card: rgba(25, 25, 32, 0.65);
+    --bg-input: rgba(255, 255, 255, 0.05);
+    --bg-hover: rgba(255, 255, 255, 0.06);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --accent-primary: #1e3a8a;
+    --accent-hover: #2563eb;
+    --error-red: #dc2626;
+    --warning-amber: #f59e0b;
+}
+
+/* Body layout - Nebula Background */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background:
+        radial-gradient(circle at 15% 30%, rgba(30, 58, 138, 0.35), transparent 40%),
+        radial-gradient(circle at 85% 70%, rgba(37, 99, 235, 0.25), transparent 45%),
+        radial-gradient(circle at 50% 50%, #07070c 0%, #050508 100%);
+    background-color: #050508;
+    color: var(--text-primary);
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 100vh;
+}
+
+/* Mobile Container Fix */
+.container {
+    min-height: 100vh;
+    padding: 20px;
+    overflow: visible;
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Dense Star Field */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(1.5px 1.5px at 120px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 350px 180px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1.5px 1.5px at 580px 100px, rgba(255,255,255,0.4), transparent),
+        radial-gradient(2px 2px at 820px 280px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 200px 300px, rgba(255,255,255,0.5), transparent);
+    background-repeat: repeat;
+    background-size: 800px 500px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.header {
+    background: var(--bg-card);
+    backdrop-filter: blur(18px);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.timer {
+    background: var(--bg-input);
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.timer-label {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.timer-value {
+    font-family: 'Orbitron', 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+    font-weight: 600;
+    color: var(--accent-hover);
+}
+
+.card {
+    position: relative;
+    background: rgba(20, 20, 28, 0.75);
+    backdrop-filter: blur(18px);
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    box-shadow: 0 0 40px rgba(30, 58, 138, 0.15);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 18px;
+    background: radial-gradient(circle at top left, rgba(37,99,235,0.25), transparent 60%);
+    z-index: -1;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 16px;
+    margin-top: 12px;
+    transition: border-color 0.15s ease;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+    border: 1px solid var(--accent-hover);
+}
+
+button {
+    margin-top: 15px;
+    background: var(--accent-primary);
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-weight: 600;
+    transition: background 0.15s ease;
+}
+
+button:hover {
+    background: var(--accent-hover);
+}
+
+.output-box {
+    margin-top: 20px;
+    padding: 18px;
+    background: var(--bg-input);
+    border-radius: 10px;
+    font-size: 18px;
+    color: var(--accent-hover);
+    border: 1px solid var(--border-subtle);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 15px;
+    margin-top: 10px;
+    resize: none;
+    transition: border-color 0.15s ease;
+    box-sizing: border-box;
+}
+
+textarea:focus {
+    outline: none;
+    border: 1px solid var(--accent-hover);
+}
+
+.submit-btn {
+    margin-top: 18px;
+}
+
+.instructions,
+.instructions-box {
+    background: var(--bg-input);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+}
+
+.instructions h4,
+.instructions-box h4 {
+    margin: 0 0 10px 0;
+    color: var(--warning-amber);
+}
+
+/* Professional Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    backdrop-filter: blur(18px);
+    padding: 30px;
+    border-radius: 10px;
+    width: 350px;
+    text-align: center;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.modal-content h3 {
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.modal-content p {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.modal-cancel {
+    background: var(--bg-hover);
+    border: 1px solid var(--border-subtle);
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.modal-confirm {
+    background: var(--accent-primary);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.modal-confirm:hover {
+    background: var(--accent-hover);
+}
+
+.modal-cancel:hover {
+    background: var(--bg-input);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .container {
+        width: 95%;
+        margin: 20px auto;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+<body class="exam-mode">
+
+<div class="header">
+    <div class="title">💻 ROUND 1</div>
+    <div class="timer">
+        <span class="timer-label">Time Remaining</span>
+        <span class="timer-value" id="timer">Loading...</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="instructions instructions-box">
+            <h4>⚠ Instructions</h4>
+            • Use variable <b>x</b> for single input problems.<br>
+            • Use variables <b>x</b> and <b>y</b> for two-input problems.<br>
+            • Do NOT use console.log or extra statements.<br>
+            • Write only the mathematical expression (like x+y or x*y).<br>
+            • Use parenthesis for functions if requied. Sample: <code>factorial(x,y)</code><br>
+        </div>
+
+        <h2>#️⃣ Test Your Input</h2>
+
+        <input type="number" id="input1" placeholder="Enter first number (x)">
+
+        <input type="number" id="input2"
+               placeholder="Enter second number (y)"
+               style="display:none;">
+
+        <button onclick="generateOutput()">Generate Output</button>
+
+        <div class="output-box">
+            Output: <span id="outputDisplay">-</span>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h3>🧠 Write Your Logic</h3>
+
+        <textarea id="logicBox"
+        placeholder="Write your expression using x or x,y..."></textarea>
+
+        <button class="submit-btn" onclick="submitLogic()">Submit Logic</button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+// ==================== HELPER FUNCTIONS FOR FORMULAS ====================
+
+function gcd(a, b) {
+    while (b !== 0) {
+        let temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+function factorial(n) {
+    let result = 1;
+    for (let i = 2; i <= n; i++) result *= i;
+    return result;
+}
+
+function isAnagram(a, b) {
+    return a.split("").sort().join("") === b.split("").sort().join("");
+}
+
+function isSubsequence(s1, s2) {
+    let j = 0;
+    for (let i = 0; i < s1.length && j < s2.length; i++) {
+        if (s1[i] === s2[j]) j++;
+    }
+    return j === s2.length;
+}
+
+function middleDigit(x) {
+    const str = String(Math.abs(x));
+    const len = str.length;
+    if (len === 0) return 0;
+    const midIndex = Math.floor(len / 2);
+    return parseInt(str[midIndex]);
+}
+
+function sumDigits(x) {
+    return String(Math.abs(x)).split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+}
+
+function reverseNumber(x) {
+    return parseInt(String(Math.abs(x)).split('').reverse().join('')) * Math.sign(x);
+}
+
+function isPalindrome(x) {
+    const str = String(Math.abs(x));
+    return str === str.split('').reverse().join('');
+}
+
+function countVowels(str) {
+    return (str.match(/[aeiouAEIOU]/g) || []).length;
+}
+
+function isPrime(n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 === 0 || n % 3 === 0) return false;
+    for (let i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+    }
+    return true;
+}
+
+function largestDigit(x) {
+    return Math.max(...String(Math.abs(x)).split('').map(Number));
+}
+
+function differenceMaxMinDigit(x) {
+    const digits = String(Math.abs(x)).split('').map(Number);
+    return Math.max(...digits) - Math.min(...digits);
+}
+
+function distanceToNearest10(x) {
+    return Math.min(
+        Math.abs(x - Math.floor(x / 10) * 10),
+        Math.abs(x - (Math.floor(x / 10) + 1) * 10)
+    );
+}
+
+function countEvenDigits(x) {
+    return String(Math.abs(x)).split('').filter(d => parseInt(d) % 2 === 0).length;
+}
+
+function countOddDigits(x) {
+    return String(Math.abs(x)).split('').filter(d => parseInt(d) % 2 !== 0).length;
+}
+
+function productDigits(x) {
+    return String(Math.abs(x)).split('').reduce((prod, digit) => prod * parseInt(digit), 1);
+}
+
+// Additional missing functions from database
+function reverse(x) {
+    return String(x).split('').reverse().join('');
+}
+
+function countDistinctCharacters(str) {
+    return new Set(str.toLowerCase()).size;
+}
+
+function longestCommonPrefix(x, y) {
+    let i = 0;
+    while (i < x.length && i < y.length && x[i] === y[i]) i++;
+    return x.substring(0, i);
+}
+
+function mergeAlternately(x, y) {
+    let result = '';
+    const maxLen = Math.max(x.length, y.length);
+    for (let i = 0; i < maxLen; i++) {
+        if (i < x.length) result += x[i];
+        if (i < y.length) result += y[i];
+    }
+    return result;
+}
+
+function removeDuplicates(str) {
+    return [...new Set(str)].join('');
+}
+
+function longestCommonSubstring(x, y) {
+    let longest = '';
+    for (let i = 0; i < x.length; i++) {
+        for (let j = i + 1; j <= x.length; j++) {
+            const substr = x.substring(i, j);
+            if (y.includes(substr) && substr.length > longest.length) {
+                longest = substr;
+            }
+        }
+    }
+    return longest;
+}
+
+function countConsonants(str) {
+    return str.toLowerCase().split('').filter(c => /[bcdfghjklmnpqrstvwxyz]/.test(c)).length;
+}
+
+function rotateLeft(str) {
+    return str.substring(1) + str[0];
+}
+
+function rotateRightDigit(x, k) {
+    const str = String(x);
+    const len = str.length;
+    k = k % len;
+    return str.substring(len - k) + str.substring(0, len - k);
+}
+
+function digitProduct(x) {
+    return String(Math.abs(x)).split('').reduce((prod, digit) => prod * parseInt(digit), 1);
+}
+
+function mod9Value(x) {
+    while (x >= 10) {
+        x = String(x).split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+    }
+    return x;
+}
+
+function productMinusSum(x) {
+    const digits = String(Math.abs(x)).split('').map(Number);
+    const product = digits.reduce((a, b) => a * b, 1);
+    const sum = digits.reduce((a, b) => a + b, 0);
+    return product - sum;
+}
+
+function reverseAndDouble(x) {
+    return reverseNumber(x) * 2;
+}
+
+function reverseIncrement(x) {
+    return reverseNumber(x) + 1;
+}
+
+function countOnesBinary(x) {
+    return x.toString(2).split('1').length - 1;
+}
+
+// ==================== MAIN SCRIPT ====================
+
+const API = "/api/blackbox";
+
+let sessionId = null;
+let endTime = null;
+let variableCount = 1;
+const FALLBACK_DURATION_MS = 5 * 60 * 1000; // 5-minute safety window
+
+// Submission flag to disable tab switching after submission
+window.EXAM_SUBMITTED = false;
+
+
+// 🔵 PAGE LOAD
+window.onload = async function() {
+
+    const teamId = localStorage.getItem("teamId");
+    if (!teamId) {
+        alert("Please login first!");
+        window.location.href = "/login.html";
+        return;
+    }
+
+    let data;
+    try {
+        const startResponse = await fetch(`${API}/start`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                team_id: teamId
+            })
+        });
+
+        data = await startResponse.json();
+    } catch (err) {
+        console.error("Start API failed, using fallback timer", err);
+        endTime = new Date(Date.now() + FALLBACK_DURATION_MS);
+        startTimer();
+        return;
+    }
+
+    console.log("=== START API RESPONSE ===");
+    console.log("Full response:", data);
+    console.log("session_id:", data.session_id);
+    console.log("round:", data.round);
+    console.log("variables:", data.variables);
+    console.log("end_time:", data.end_time);
+
+    // 🟢 If completed all rounds
+    if (data.status === "completed") {
+        window.location.href = data.redirect || "/blackbox/leaderboard.html";
+        return;
+    }
+
+    // 🔄 Check if backend says we should be on different round
+    if (data.round && data.round !== 1) {
+        window.location.href = `/blackbox/round${data.round}.html`;
+        return;
+    }
+
+    // 🔴 If blocked (eliminated or other restriction)
+    if (data.status === "blocked") {
+        alert(data.message || "Access blocked");
+        window.location.href = data.redirect || "/blackbox/leaderboard.html";
+        return;
+    }
+
+    // 🔴 If batch not started or no session provisioned
+    if (data.status === "waiting" || data.error || !data.session_id) {
+        alert(data.message || data.error || "Session not initialized. Ask admin to start your batch or re-login.");
+        return;
+    }
+
+    // Check if no questions found
+    if (data.message === "No questions found for this round") {
+        alert("No questions available. Please contact admin.");
+        return;
+    }
+
+    // 🔴 If already completed this round → go to next
+    if (data.status === "already_completed") {
+        window.location.href = "/blackbox/round2.html";
+        return;
+    }
+
+    sessionId = data.session_id;
+    variableCount = data.variables;
+
+    const parsedEnd = data.end_time ? new Date(data.end_time) : null;
+    if (parsedEnd && !isNaN(parsedEnd.getTime())) {
+        endTime = parsedEnd;
+    } else {
+        console.warn("Invalid end_time, using fallback");
+        endTime = new Date(Date.now() + FALLBACK_DURATION_MS);
+        document.getElementById("timer").innerText = "⏱️ 05:00";
+    }
+
+    // Show second input if needed
+    if (variableCount === 2) {
+        document.getElementById("input2").style.display = "block";
+    }
+
+    startTimer();
+};
+
+
+// 🔴 TAB SWITCH PENALTY SYSTEM
+// Cooldown to prevent multiple triggers
+let tabSwitchCooldown = false;
+
+document.addEventListener("visibilitychange", async function () {
+    console.log('[Round 1] Visibility changed, state:', document.visibilityState);
+    
+    // Skip if exam is already submitted
+    if (window.EXAM_SUBMITTED) {
+        console.log('[Round 1] Exam already submitted, skipping penalty');
+        return;
+    }
+    
+    if (!sessionId) {
+        console.log('[Round 1] No session ID, skipping');
+        return;
+    }
+    
+    // Skip if cooldown active
+    if (tabSwitchCooldown) {
+        console.log('[Round 1] Cooldown active, skipping');
+        return;
+    }
+
+    if (document.visibilityState === 'hidden') {
+        console.log('[Round 1] Tab switch detected! Applying penalty...');
+        tabSwitchCooldown = true;
+        
+        try {
+            const response = await fetch(`${API}/tab-switch`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    session_id: sessionId
+                })
+            });
+
+            const data = await response.json();
+            console.log('[Round 1] Tab switch response:', data);
+
+            if (data.action === "penalty") {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('[Round 1] Tab switch API error:', error);
+        } finally {
+            // 3 second cooldown before next penalty can trigger
+            setTimeout(() => {
+                tabSwitchCooldown = false;
+            }, 3000);
+        }
+    }
+});
+
+
+
+
+// 🔵 GENERATE OUTPUT
+async function generateOutput() {
+
+    const input1 = document.getElementById("input1").value;
+    const input2 = document.getElementById("input2").value;
+
+    let finalInput;
+
+    if (variableCount === 2) {
+        finalInput = input1 + " " + input2;
+    } else {
+        finalInput = input1;
+    }
+
+    const response = await fetch(`${API}/test`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            session_id: sessionId,
+            input: finalInput
+        })
+    });
+
+    const data = await response.json();
+
+    if (data.output !== undefined) {
+        document.getElementById("outputDisplay").innerText = data.output;
+    } else {
+        document.getElementById("outputDisplay").innerText = "Error";
+    }
+}
+
+
+async function submitLogic() {
+    // Mark exam as submitted to disable tab switching
+    window.EXAM_SUBMITTED = true;
+    console.log('[Round 1] Exam submitted, tab switching disabled');
+
+    if (!sessionId) {
+        alert("Unable to submit: session not initialized. Please reload (server might be offline).");
+        window.EXAM_SUBMITTED = false; // Re-enable if validation fails
+        return;
+    }
+
+    const logic = document.getElementById("logicBox").value;
+
+    let data;
+    try {
+        const response = await fetch(`${API}/submit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                session_id: sessionId,
+                answer: logic
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Submit failed: ${response.status}`);
+        }
+
+        data = await response.json();
+    } catch (err) {
+        console.error("Submit failed", err);
+        alert("Submit failed. Please check connection/server and try again.");
+        window.EXAM_SUBMITTED = false;
+        return;
+    }
+
+    console.log("Submit response:", data);
+
+    // Old BlackBox logic: Multiple attempts, no elimination
+    if (data.result && data.result.toLowerCase() === "correct") {
+        showModal(
+            "Correct Answer!",
+            `Well done! Your score: ${data.score || 0} marks\nProceeding to Round 2`,
+            "round2.html"
+        );
+    } else if (data.result === "wrong") {
+        // Give participation marks and allow retry or advance
+        showModal(
+            "Incorrect Answer", 
+            `Your answer needs improvement.\nParticipation marks awarded.\nYou can retry or move to next round.`,
+            "round2.html"
+        );
+    } else {
+        showModal(
+            "Submission Complete",
+            "Moving to next round...",
+            "round2.html"
+        );
+    }
+}
+
+
+// 🔵 TIMER
+function startTimer() {
+
+    const timer = document.getElementById("timer");
+
+    if (!endTime || isNaN(endTime.getTime())) {
+        timer.innerText = "⏱️ --:--";
+        return;
+    }
+
+    const interval = setInterval(() => {
+
+        const now = new Date();
+        const diff = endTime - now;
+
+        if (diff <= 0) {
+            
+            clearInterval(interval);
+            // Auto-submit on timeout
+            submitLogic();
+            return;
+        }
+
+        const m = Math.floor(diff / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+
+        timer.innerText =
+            `⏱️ ${m}:${s < 10 ? "0" : ""}${s}`;
+
+    }, 1000);
+}
+function showModal(title, message, redirectUrl) {
+
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+
+    const modal = document.getElementById("resultModal");
+    modal.style.display = "flex";
+
+    document.getElementById("confirmBtn").onclick = function() {
+        window.location.href = redirectUrl;
+    };
+}
+
+
+function closeModal() {
+    document.getElementById("resultModal").style.display = "none";
+}
+
+</script>
+
+<!-- 🔵 RESULT MODAL -->
+<div id="resultModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+        <p id="modalMessage"></p>
+
+        <div style="margin-top:20px;">
+    <button class="modal-confirm" id="confirmBtn">Continue</button>
+</div>
+
+    </div>
+</div>
+
+</body>
+
+</html>
